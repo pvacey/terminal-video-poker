@@ -1,4 +1,9 @@
-import sys, os, locale, curses
+import sys
+import os
+import locale
+import curses
+import time
+
 import poker
 locale.setlocale(locale.LC_ALL, '')
 
@@ -11,15 +16,29 @@ def render_selection(selection):
             tmp += '     [    ]  '
     return tmp
 
+def fancy_render(s, vp, existing_cards):
+    frames = vp.render_new(existing_cards)
+    last_frame = None
+    for i in frames:
+        time.sleep(.5)
+        s.clear()
+        s.addstr(0, 0, i)
+        s.addstr(8,0, render_selection(existing_cards))
+        s.refresh()
+        last_frame = i
+
+    return last_frame
+
+
 def draw_menu(stdscr):
     k = 0
     # Clear and refresh the screen for a blank canvas
     stdscr.clear()
     stdscr.refresh()
 
-    vp = poker.VideoPoker()
-    card_rendering = vp.render()
     selection = set()
+    vp = poker.VideoPoker()
+    card_rendering = fancy_render(stdscr, vp, selection)
 
     while (k != ord('q')):
         # Initialization
@@ -27,11 +46,14 @@ def draw_menu(stdscr):
         height, width = stdscr.getmaxyx()
 
         if k == 10: # enter key
-            vp.draw(selection)
-            card_rendering = vp.render()
             # reset selection on first round, show result on second
-            if vp.round == 1:
+            if vp.round == 2:
                 selection = set()
+
+            vp.draw(selection)
+            card_rendering = fancy_render(stdscr, vp, selection)
+
+
         elif k in [49,50,51,52,53]:
             # only make changes during round 1
             if vp.round == 1:
