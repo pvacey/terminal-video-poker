@@ -109,7 +109,7 @@ class VideoPoker(object):
     def __init__(self):
         self.deck = Deck()
         self.hand = []
-        self.round = 2 # always start in game over mode
+        self.round = 2 # always start in gameover mode
         self.result = ''
         self.balance = 100
 
@@ -118,7 +118,7 @@ class VideoPoker(object):
         self.hand = self.deck.draw(5)
         self.round = 1
         self.result = ''
-        self.balance -= 5 # pay for a new hand
+        self.balance -= 5 # pay the bet for a new hand
 
     def draw(self, selection=set()):
         self.round += 1
@@ -130,7 +130,6 @@ class VideoPoker(object):
                 if i not in selection:
                     self.hand[i] = self.deck.draw(1)[0]
             self.score()
-            # if self.round == 2:
 
     def score(self):
         self.check_hand()
@@ -166,7 +165,7 @@ class VideoPoker(object):
             if is_straight:
                 scores.append('STRAIGHT')
 
-        # else, check for pair, 3 of a kind, 4 of a kind
+        # check for pair, 3 of a kind, 4 of a kind
         else:
             for k,v in counts['values'].items():
                 if v == 4:
@@ -181,7 +180,7 @@ class VideoPoker(object):
             if v == 5:
                 scores.append('FLUSH')
 
-        # assume gamover, otherwise check hands in descending order
+        # assume gameover, otherwise check hands in descending order
         tmp = 'GAMEOVER'
         if 'FLUSH' in scores and 'STRAIGHT' in scores:
             tmp = 'STRAIGHT FLUSH'
