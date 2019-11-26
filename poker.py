@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import random
-import json
 
 class Card(object):
     display = {
@@ -235,29 +234,3 @@ class VideoPoker(object):
             printable.add(i)
             frames.append(self.render_frame(printable))
         return frames
-
-
-
-if __name__ == '__main__':
-    vp = VideoPoker()
-    vp.hand = [
-        Card('K','K','X'),
-        Card('K','K','X'),
-        Card('1','1','X'),
-        Card('2','2','X'),
-        Card('3','3','X')
-    ]
-    selection = set({0,1,2,3,4})
-    print(vp.render_frame(selection))
-    # vp.score()
-    # print(vp.result)
-    # selection = set()
-    # selection = set({0,4})
-    # selection = set({0,2,3,4})
-    # print(vp.hand[0].render_blank())
-    # print(vp.render_frame(selection))
-    # print(selection)
-    # for frame in vp.render_new(selection):
-    #
-    #     print(selection)
-    #     print(frame)

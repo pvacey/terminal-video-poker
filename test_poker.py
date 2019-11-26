@@ -5,9 +5,8 @@ import pytest
 # manually override the hands and score them, checking the expected values
 vp = VideoPoker()
 
-
 '''
-test hands
+test scoring hands
 '''
 def test_nothing():
     vp.hand = [
@@ -231,7 +230,7 @@ def test_royal_flush_2():
     assert vp.result == "ROYAL FLUSH"
 
 '''
-payout tests
+test payouts and betting
 '''
 def test_get_pay_table():
     pay_table = PayTable().get_pay_table()
@@ -250,7 +249,7 @@ def test_get_payout_4():
     assert PayTable().get_payout('STRAIGHT FLUSH') == 250
 
 def test_payout_applied():
-    # make sure scoring a flush adds 30 to balance
+    # scoring a flush adds 30 to balance
     vp.balance = 200
     vp.hand = [
         Card(3,1),
@@ -262,8 +261,55 @@ def test_payout_applied():
     vp.score()
     assert vp.balance == 230
 
+def test_payout_applied_2():
+    # scoring a pair adds 5 to balance
+    vp.balance = 105
+    vp.hand = [
+        Card(3,0),
+        Card(11,1),
+        Card(4,3),
+        Card(2,2),
+        Card(2,1)
+    ]
+    vp.score()
+    assert vp.balance == 110
+
 def test_bet_deducted():
     vp.balance = 150
     vp.round = 2
     vp.draw()
     assert vp.balance == 145
+
+def test_end_to_end():
+    # start fresh, draw a hand, win a flush (forced), earn payout - bet
+    vp.__init__()
+    assert vp.balance == 100
+    vp.draw()
+    assert vp.balance == 95
+    # set a flush manually
+    vp.hand = [
+        Card(3,1),
+        Card(11,1),
+        Card(5,1),
+        Card(2,1),
+        Card(2,1)
+    ]
+    # hold everything
+    vp.draw(set({0,1,2,3,4}))
+    assert vp.result == 'FLUSH' and vp.balance == 125
+
+def test_end_to_end_2():
+    # start fresh, draw a hand, win a pair (forced), break even
+    vp.__init__()
+    vp.draw()
+    # set a pair manually
+    vp.hand = [
+        Card(3,1),
+        Card(11,1),
+        Card(5,2),
+        Card(2,1),
+        Card(2,1)
+    ]
+    # hold everything
+    vp.draw(set({0,1,2,3,4}))
+    assert vp.result == 'PAIR' and vp.balance == 100
