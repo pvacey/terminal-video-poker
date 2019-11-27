@@ -28,8 +28,10 @@ class Card(object):
     def __init__(self, val, suit):
         self.number_value = val
         self.display_value = self.display[val]
-        self.suit_val = self.suits.items()[suit][0]
-        self.suit_symbol = self.suits.items()[suit][1]
+        self.suit_val = list(self.suits.items())[suit][0]
+        self.suit_symbol = list(self.suits.items())[suit][1]
+        # self.suit_val = suit
+        # self.suit_symbol = self.suits[suit]
 
     def __str__(self):
         # return render_card()
@@ -77,7 +79,7 @@ class Deck(object):
 
 class PayTable(object):
     scores = [
-        {'ROYAL FLUSH': 4000},
+        {'ROYAL FLUSH':4000},
         {'STRAIGHT FLUSH': 250},
         {'FOUR OF A KIND': 125},
         {'FULL HOUSE': 45},
@@ -85,15 +87,26 @@ class PayTable(object):
         {'STRAIGHT': 20},
         {'THREE OF A KIND': 15},
         {'TWO PAIR': 10},
-        {'PAIR': 5},
+        {'PAIR': 5}
     ]
+    # scores = [
+    #     {'name':'ROYAL FLUSH', 'value':4000},
+    #     {'name':'STRAIGHT FLUSH', 'value': 250},
+    #     {'name':'FOUR OF A KIND', 'value': 125},
+    #     {'name':'FULL HOUSE', 'value': 45},
+    #     {'name':'FLUSH', 'value': 30},
+    #     {'name':'STRAIGHT', 'value': 20},
+    #     {'name':'THREE OF A KIND', 'value': 15},
+    #     {'name':'TWO PAIR', 'value': 10},
+    #     {'name':'PAIR', 'value': 5},
+    # ]
 
     def get_pay_table(self):
         return self.scores
 
     def get_payout(self, hand):
         for i in self.scores:
-            k,v = i.items()[0]
+            k,v = list(i.items())[0]
             if hand == k:
                 return v
         return 0

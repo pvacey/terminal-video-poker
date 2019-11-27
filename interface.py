@@ -33,7 +33,7 @@ def render_paytable(s, vp):
     row = 0
     s.clear()
     for i in table:
-        k,v = i.items()[0]
+        k,v = list(i.items())[0]
         padding = ' '*get_right_justified_offset(s, str(k)+str(v))
         wide_string = '{}{}{}'.format(k,padding,v)
         s.addstr(row, 0, wide_string)
