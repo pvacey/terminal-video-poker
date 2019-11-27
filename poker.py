@@ -37,28 +37,6 @@ class Card(object):
         # return render_card()
         return '{}{}'.format(self.display_value, self.suit_val)
 
-    def render_card(self):
-        val = self.display_value
-        if len(val)<2:
-            val ='{} '.format(val)
-        return '''┌─────────┐
-| {}      |
-|         |
-|    {}    |
-|         |
-|       {}|
-└─────────┘'''.format(val, self.suit_symbol, val)
-
-    def render_blank(self):
-        return ('┌         ┐'
-        '\n           '
-        '\n           '
-        '\n           '
-        '\n           '
-        '\n           '
-        '\n└         ┘')
-
-
 class Deck(object):
     def __init__(self):
         super(Deck, self).__init__()
@@ -206,34 +184,3 @@ class VideoPoker(object):
                 tmp = 'JACKS OR BETTER'
 
         self.result = tmp
-
-    def render_frame(self, positions):
-        str_cards = []
-        for i in range(0,5):
-            if i in positions:
-                # str_cards.append(self.hand[i].render_card_v2())
-                str_cards.append(self.hand[i].render_card())
-            else:
-                str_cards.append(self.hand[i].render_blank())
-
-        # tmp = 'Round: {}\n'.format(self.round)
-        tmp = ''
-        for i in range(0,len(str_cards[0].splitlines())):
-            for card in str_cards:
-                tmp += '  ' + card.splitlines()[i]
-            tmp+='\n'
-        return tmp
-
-
-    def render_new(self, selected):
-        all_selected = set({0,1,2,3,4})
-        populate = all_selected - selected
-        printable = selected.copy()
-        frames = []
-        # first only show selected ones
-        frames.append(self.render_frame(printable))
-        # fill in the blanks
-        for i in populate:
-            printable.add(i)
-            frames.append(self.render_frame(printable))
-        return frames
