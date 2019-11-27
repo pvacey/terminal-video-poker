@@ -65,6 +65,7 @@ class Deck(object):
         self.deck = []
 
     def shuffle(self):
+        self.deck = []
         for i in range(2,14):
             for j in range(0,4):
                 c = Card(i,j)
@@ -90,17 +91,6 @@ class PayTable(object):
         {'JACKS OR BETTER': 5},
         {'PAIR': 0}
     ]
-    # scores = [
-    #     {'name':'ROYAL FLUSH', 'value':4000},
-    #     {'name':'STRAIGHT FLUSH', 'value': 250},
-    #     {'name':'FOUR OF A KIND', 'value': 125},
-    #     {'name':'FULL HOUSE', 'value': 45},
-    #     {'name':'FLUSH', 'value': 30},
-    #     {'name':'STRAIGHT', 'value': 20},
-    #     {'name':'THREE OF A KIND', 'value': 15},
-    #     {'name':'TWO PAIR', 'value': 10},
-    #     {'name':'PAIR', 'value': 5},
-    # ]
 
     def get_pay_table(self):
         return self.scores.copy()
@@ -138,6 +128,7 @@ class VideoPoker(object):
                 if i not in selection:
                     self.hand[i] = self.deck.draw(1)[0]
             self.score()
+        self.check_hand()
 
     def score(self):
         self.check_hand()
@@ -191,7 +182,7 @@ class VideoPoker(object):
                 scores.append('FLUSH')
 
         # assume gameover, otherwise check hands in descending order
-        tmp = 'GAMEOVER'
+        tmp = ''
         if 'FLUSH' in scores and 'STRAIGHT' in scores:
             tmp = 'STRAIGHT FLUSH'
             # if the lowest card is 10 in this straight flush, it's a royal flush
