@@ -112,20 +112,32 @@ def render_cards(s, vp, existing_cards, first=False):
                     # print filler space
                     s.addstr(y, x, ' ', color)
 
+                    char_width = len(c.display_value)
+
                     # red for some cards
                     if c.suit_val in ['hearts', 'diamonds']:
                         color = curses.color_pair(2)
                     # top left
                     if x == (left+x_margin) and y == (up+y_margin):
                         s.addstr(y, x, c.display_value, color)
+                    if (char_width > 1) and x == (left+x_margin+1) and y == (up+y_margin):
+                        s.addstr(y, x, c.display_value[1], color)
                     # center
                     middle_x = left + int((right-left)/2)
                     middle_y = up + int((down-up)/2)
                     if x == middle_x and y == middle_y:
                         s.addstr(y, x, c.suit_symbol, color)
                     # bottom right
+                    first_val = c.display_value[0]
+                    second_val = None
+                    if char_width > 1:
+                        second_val = c.display_value[1]
                     if x == (right-x_margin-1) and y == (down-y_margin-1):
-                        s.addstr(y, x, c.display_value, color)
+                        s.addstr(y, x, first_val, color)
+                        if second_val:
+                            s.addstr(y, x, second_val, color)
+                    if second_val and x == (right-x_margin-2) and y == (down-y_margin-1):
+                        s.addstr(y, x, first_val, color)
                 else:
                     s.addstr(y, x, 'X', curses.color_pair(4))
 
