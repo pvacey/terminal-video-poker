@@ -43,11 +43,15 @@ def render_paytable(s, vp):
     s.refresh()
 
 def render_cards(s, vp, existing_cards, first=False):
-    # get frames
+    # get a set of frames to render which makes it look like card are being dealt left to right
     frames = vp.render_new(existing_cards)
+
+    # for game start, show just blanks slots for cards
     if first:
         frames = [frames[0]]
-    last_frame = None
+
+    # double the first frame, looks better
+    frames.insert(0,frames[0])
     # draw each frame
     for i in frames:
         time.sleep(0.25)
@@ -59,7 +63,7 @@ def render_cards(s, vp, existing_cards, first=False):
         if vp.round == 2:
             s.addstr(11,get_center_offset(s,vp.result), vp.result)
 
-        tmp = 'BET'
+        tmp = 'BET 5'
         if vp.round == 1:
             tmp = 'DRAW'
         tmp = '{} [ENTER]'.format(tmp)
@@ -75,13 +79,12 @@ def draw_menu(stdscr):
     # Initialization
     height, width = stdscr.getmaxyx()
     stdscr.refresh()
+    curses.curs_set(0)
 
     width = 67
-    paytable_win = curses.newwin(0,width,0,0)
+    paytable_win = curses.newwin(10,width,0,0)
     card_win = curses.newwin(14,width,10,0)
     card_win.clear()
-
-
 
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
@@ -94,11 +97,6 @@ def draw_menu(stdscr):
     render_cards(card_win, vp, selection, first=True)
 
     while (k not in [ord('q'), ord('Q')]):
-        # Initialization
-        # stdscr.clear()
-        height, width = stdscr.getmaxyx()
-
-        # render_cards(card_win, vp, selection, first=True)
 
         if k == 10: # enter key
             # reset selection on first round, show result on second
@@ -106,8 +104,8 @@ def draw_menu(stdscr):
                 selection = set()
 
             vp.draw(selection)
-            render_paytable(paytable_win, vp)
             render_cards(card_win, vp, selection)
+            render_paytable(paytable_win, vp)
 
         elif k in [49,50,51,52,53]: # 1,2,3,4,5 keys
             # only allow "hold" changes during round 1
