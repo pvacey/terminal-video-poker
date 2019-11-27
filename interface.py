@@ -74,7 +74,7 @@ def render_cardwin(s, vp, existing_cards, first=False):
     render_status_line(s, vp)
     s.box(0,0)
     if not first:
-        time.sleep(0.3)
+        time.sleep(0.2)
         # fill in the blanks
         for i in populate:
             s.clear()
@@ -85,7 +85,7 @@ def render_cardwin(s, vp, existing_cards, first=False):
             render_status_line(s, vp)
             s.box(0,0)
             s.refresh()
-            time.sleep(0.15)
+            time.sleep(0.1)
 
 
 def render_cards(s, vp, existing_cards, first=False):
