@@ -37,23 +37,28 @@ def render_paytable(s, vp):
     table.pop()
     for i in table:
         k,v = list(i.items())[0]
-        padding = ' '*get_right_justified_offset(s, str(k)+str(v))
-        wide_string = '{}{}{}'.format(k,padding,v)
+        padding = ' '*(get_right_justified_offset(s, str(k)+str(v))-2)
+        wide_string = ' {}{}{} '.format(k,padding,v)
         s.addstr(row, 0, wide_string)
-        if k == vp.result:
+        if k == vp.result and vp.round == 2:
             s.addstr(row, 0, wide_string, curses.color_pair(3))
         row += 1
     s.refresh()
 
 def render_status_line(s, vp):
-    s.addstr(11,0, 'CREDIT {}'.format(vp.balance))
+    s.addstr(10,1, ' CREDIT {} '.format(vp.balance), curses.A_STANDOUT)
+    s.addstr(10,get_center_offset(s,vp.result), vp.result)
     if vp.round == 2:
-        s.addstr(11,get_center_offset(s,vp.result), vp.result)
+        if vp.result == '' or vp.result == 'PAIR':
+            s.addstr(10,get_center_offset(s,'GAME OVER'), 'GAME OVER')
+        else:
+            s.addstr(10,get_center_offset(s,vp.result), vp.result, curses.A_BLINK)
+
     tmp = 'BET 5'
     if vp.round == 1:
         tmp = 'DRAW'
-    tmp = '{} [ENTER]'.format(tmp)
-    s.addstr(11, get_right_justified_offset(s, tmp), tmp)
+    tmp = '{} [ENTER] '.format(tmp)
+    s.addstr(10, get_right_justified_offset(s, tmp), tmp)
     s.refresh()
 
 def render_cardwin(s, vp, existing_cards, first=False):
@@ -66,7 +71,7 @@ def render_cardwin(s, vp, existing_cards, first=False):
     render_selection(s, existing_cards)
     render_status_line(s, vp)
     if not first:
-        time.sleep(0.5)
+        time.sleep(0.3)
         # fill in the blanks
         for i in populate:
             s.clear()
@@ -76,7 +81,7 @@ def render_cardwin(s, vp, existing_cards, first=False):
             render_selection(s, existing_cards)
             render_status_line(s, vp)
             s.refresh()
-            time.sleep(0.25)
+            time.sleep(0.15)
 
 def render_cards(s, vp, existing_cards, first=False):
     width = 11
@@ -91,10 +96,7 @@ def render_cards(s, vp, existing_cards, first=False):
     down = height
     index = 0
 
-
-
     s.clear()
-    # s.addstr(13, 0, str(existing_cards))
     for c in vp.hand:
         for y in range(up, down):
             for x in range(left, right):
@@ -119,8 +121,6 @@ def render_cards(s, vp, existing_cards, first=False):
                         s.addstr(y, x, c.display_value, color)
                 else:
                     s.addstr(y, x, 'X', curses.color_pair(4))
-                    # if (x == left or x == right-1)  or (y == up or y == down-1):
-                    #     s.addstr(y, x, ' ', curses.color_pair(1))
 
         left += width + padding
         right += width + padding
@@ -182,3 +182,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''
+TODO
+- render `10` instead of `T`
+- scrolling credits vs 1 frame update
+- maybe not possible
+    - flash center of status bar on payout? might mean no waiting for key input
+    - beep on payout???
+'''
