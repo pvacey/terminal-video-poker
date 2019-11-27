@@ -10,7 +10,7 @@ locale.setlocale(locale.LC_ALL, '')
 
 def get_right_justified_offset(screen, string):
     height, width = screen.getmaxyx()
-    return (width - len(string))
+    return (width - len(string) - 1)
 
 def get_center_offset(screen, string):
     height, width = screen.getmaxyx()
@@ -22,43 +22,45 @@ def render_selection(s, selection):
     tmp = ''
     for i in range(0,5):
         if i in selection:
-            tmp += '        [x]    '
+            tmp += '       [x]     '
         else:
-            tmp += '        [ ]    '
-    s.addstr(8,0, tmp)
+            tmp += '       [ ]     '
+    s.addstr(10,1, tmp)
     s.refresh()
     return tmp
 
 def render_paytable(s, vp):
     table = PayTable().get_pay_table()
-    row = 0
+    row = 1
     s.clear()
     # drop pairs
     table.pop()
     for i in table:
         k,v = list(i.items())[0]
-        padding = ' '*(get_right_justified_offset(s, str(k)+str(v))-2)
+        padding = ' '*(get_right_justified_offset(s, str(k)+str(v))-3)
         wide_string = ' {}{}{} '.format(k,padding,v)
-        s.addstr(row, 0, wide_string)
+        s.addstr(row, 1, wide_string)
         if k == vp.result and vp.round == 2:
-            s.addstr(row, 0, wide_string, curses.color_pair(3))
+            s.addstr(row, 1, wide_string, curses.color_pair(3))
         row += 1
+    s.box(0,0)
     s.refresh()
 
 def render_status_line(s, vp):
-    s.addstr(10,1, ' CREDIT {} '.format(vp.balance), curses.A_STANDOUT)
-    s.addstr(10,get_center_offset(s,vp.result), vp.result)
+    row = 12
+    s.addstr(row,1, ' CREDIT {} '.format(vp.balance))
+    s.addstr(row,get_center_offset(s,vp.result), vp.result)
     if vp.round == 2:
         if vp.result == '' or vp.result == 'PAIR':
-            s.addstr(10,get_center_offset(s,'GAME OVER'), 'GAME OVER')
+            s.addstr(row,get_center_offset(s,'GAME OVER'), 'GAME OVER')
         else:
-            s.addstr(10,get_center_offset(s,vp.result), vp.result, curses.A_BLINK)
+            s.addstr(row,get_center_offset(s,vp.result), vp.result)
 
     tmp = 'BET 5'
     if vp.round == 1:
         tmp = 'DRAW'
     tmp = '{} [ENTER] '.format(tmp)
-    s.addstr(10, get_right_justified_offset(s, tmp), tmp)
+    s.addstr(row, get_right_justified_offset(s, tmp), tmp)
     s.refresh()
 
 def render_cardwin(s, vp, existing_cards, first=False):
@@ -70,6 +72,7 @@ def render_cardwin(s, vp, existing_cards, first=False):
     render_cards(s, vp, printable)
     render_selection(s, existing_cards)
     render_status_line(s, vp)
+    s.box(0,0)
     if not first:
         time.sleep(0.3)
         # fill in the blanks
@@ -80,8 +83,10 @@ def render_cardwin(s, vp, existing_cards, first=False):
             render_cards(s, vp, printable)
             render_selection(s, existing_cards)
             render_status_line(s, vp)
+            s.box(0,0)
             s.refresh()
             time.sleep(0.15)
+
 
 def render_cards(s, vp, existing_cards, first=False):
     width = 11
@@ -92,11 +97,12 @@ def render_cards(s, vp, existing_cards, first=False):
 
     left = padding
     right = padding + width
-    up = 0
-    down = height
+    up = 2
+    down = height + up
     index = 0
 
     s.clear()
+    s.box(0,0)
     for c in vp.hand:
         for y in range(up, down):
             for x in range(left, right):
@@ -140,8 +146,8 @@ def draw_menu(stdscr):
     curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_RED)
 
     width = 79
-    paytable_win = curses.newwin(10,width,0,0)
-    card_win = curses.newwin(14,width,10,0)
+    paytable_win = curses.newwin(11,width,0,0)
+    card_win = curses.newwin(14,width,11,0)
     card_win.clear()
 
     # init poker stuff
