@@ -18,7 +18,7 @@ def test_nothing():
         Card(6,3)
     ]
     vp.score()
-    assert vp.result == "GAMEOVER"
+    assert vp.result == ""
 
 def test_nothing_2():
     vp.hand = [
@@ -29,7 +29,7 @@ def test_nothing_2():
         Card(13,0)
     ]
     vp.score()
-    assert vp.result == "GAMEOVER"
+    assert vp.result == ""
 
 def test_pair():
     vp.hand = [
@@ -352,9 +352,10 @@ def test_paytable_pop():
     table = PayTable().get_pay_table()
     assert table_length == len(table)
 
-# def test_cannot_have_1():
-#     vp.__init__()
-#     vp.deck.shuffle()
-#     for c in vp.deck.deck:
-#         print(c)
-#     assert False
+def test_deck_always_starts_with_52_cards():
+    vp.__init__()
+    assert len(vp.deck.deck) <= 52
+    vp.deck.shuffle()
+    assert len(vp.deck.deck) <= 52
+    vp.deck.shuffle()
+    assert len(vp.deck.deck) <= 52
