@@ -36,7 +36,7 @@ class Card(object):
         return '{}{}'.format(self.display_value, self.suit_symbol)
 
     def render_card(self):
-        val = self.val
+        val = self.display_value
         if len(val)<2:
             val ='{} '.format(val)
         return '''┌─────────┐
@@ -46,12 +46,6 @@ class Card(object):
 |         |
 |       {}|
 └─────────┘'''.format(val, self.suit_symbol, val)
-
-    def render_card_v2(self):
-        val = self.val
-        if len(val)<2:
-            val ='{} '.format(val)
-        return u"\u001b[47;1m"
 
     def render_blank(self):
         return ('┌         ┐'
@@ -213,7 +207,8 @@ class VideoPoker(object):
             else:
                 str_cards.append(self.hand[i].render_blank())
 
-        tmp = 'Round: {}\n'.format(self.round)
+        # tmp = 'Round: {}\n'.format(self.round)
+        tmp = ''
         for i in range(0,len(str_cards[0].splitlines())):
             for card in str_cards:
                 tmp += '  ' + card.splitlines()[i]
