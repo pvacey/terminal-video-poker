@@ -120,7 +120,8 @@ def render_cards(s, vp, existing_cards, first=False):
                         s.addstr(y, x, c.display_value, color)
                     # center
                     middle_x = left + int((right-left)/2)
-                    if x == middle_x and y ==int(down/2):
+                    middle_y = up + int((down-up)/2)
+                    if x == middle_x and y == middle_y:
                         s.addstr(y, x, c.suit_symbol, color)
                     # bottom right
                     if x == (right-x_margin-1) and y == (down-y_margin-1):
