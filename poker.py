@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import random
 
@@ -12,7 +12,7 @@ class Card(object):
         7:'7',
         8:'8',
         9:'9',
-        10:'10',
+        10:'T',
         11:'J',
         12:'Q',
         13:'K',
@@ -35,7 +35,7 @@ class Card(object):
 
     def __str__(self):
         # return render_card()
-        return '{}{}'.format(self.display_value, self.suit_symbol)
+        return '{}{}'.format(self.display_value, self.suit_val)
 
     def render_card(self):
         val = self.display_value
@@ -87,7 +87,8 @@ class PayTable(object):
         {'STRAIGHT': 20},
         {'THREE OF A KIND': 15},
         {'TWO PAIR': 10},
-        {'PAIR': 5}
+        {'JACKS OR BETTER': 5},
+        {'PAIR': 0}
     ]
     # scores = [
     #     {'name':'ROYAL FLUSH', 'value':4000},
@@ -102,7 +103,7 @@ class PayTable(object):
     # ]
 
     def get_pay_table(self):
-        return self.scores
+        return self.scores.copy()
 
     def get_payout(self, hand):
         for i in self.scores:
@@ -181,7 +182,9 @@ class VideoPoker(object):
                     scores.append('TRIPS')
                 elif v == 2:
                     scores.append('PAIR')
-
+                    print('K')
+                    if k > 10:
+                        scores.append('JACKS')
         # also check for flush
         for k,v in counts['suits'].items():
             if v == 5:
@@ -208,6 +211,8 @@ class VideoPoker(object):
             tmp = 'PAIR'
             if scores.count('PAIR') > 1:
                 tmp = 'TWO PAIR'
+            elif 'JACKS' in scores:
+                tmp = 'JACKS OR BETTER'
 
         self.result = tmp
 

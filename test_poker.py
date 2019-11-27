@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from poker import *
 import pytest
 
@@ -45,12 +46,35 @@ def test_pair_2():
     vp.hand = [
         Card(5,0),
         Card(2,2),
-        Card(13,1),
+        Card(6,1),
         Card(13,3),
         Card(6,3)
     ]
     vp.score()
     assert vp.result == "PAIR"
+
+def test_jacks():
+    vp.hand = [
+        Card(11,0),
+        Card(2,2),
+        Card(13,1),
+        Card(13,3),
+        Card(6,3)
+    ]
+    vp.score()
+    assert vp.result == "JACKS OR BETTER"
+
+def test_jacks_2():
+    vp.hand = [
+        Card(11,0),
+        Card(2,2),
+        Card(14,1),
+        Card(14,3),
+        Card(6,3)
+    ]
+    vp.score()
+    assert vp.result == "JACKS OR BETTER"
+
 
 def test_two_pair():
     vp.hand = [
@@ -234,7 +258,7 @@ test payouts and betting
 '''
 def test_get_pay_table():
     pay_table = PayTable().get_pay_table()
-    assert pay_table == [{'ROYAL FLUSH': 4000}, {'STRAIGHT FLUSH': 250}, {'FOUR OF A KIND': 125}, {'FULL HOUSE': 45}, {'FLUSH': 30}, {'STRAIGHT': 20}, {'THREE OF A KIND': 15}, {'TWO PAIR': 10}, {'PAIR': 5}]
+    assert pay_table == [{'ROYAL FLUSH': 4000}, {'STRAIGHT FLUSH': 250}, {'FOUR OF A KIND': 125}, {'FULL HOUSE': 45}, {'FLUSH': 30}, {'STRAIGHT': 20}, {'THREE OF A KIND': 15}, {'TWO PAIR': 10}, {'JACKS OR BETTER': 5}, {'PAIR': 0}]
 
 def test_get_payout():
     assert PayTable().get_payout('STRAIGHT') == 20
@@ -259,6 +283,7 @@ def test_payout_applied():
         Card(2,1)
     ]
     vp.score()
+    print(vp.balance)
     assert vp.balance == 230
 
 def test_payout_applied_2():
@@ -267,11 +292,12 @@ def test_payout_applied_2():
     vp.hand = [
         Card(3,0),
         Card(11,1),
-        Card(4,3),
-        Card(2,2),
+        Card(12,3),
+        Card(12,2),
         Card(2,1)
     ]
     vp.score()
+    print(vp.balance)
     assert vp.balance == 110
 
 def test_bet_deducted():
@@ -307,9 +333,28 @@ def test_end_to_end_2():
         Card(3,1),
         Card(11,1),
         Card(5,2),
-        Card(2,1),
-        Card(2,1)
+        Card(12,2),
+        Card(12,1)
     ]
     # hold everything
     vp.draw(set({0,1,2,3,4}))
-    assert vp.result == 'PAIR' and vp.balance == 100
+    assert vp.result == 'JACKS OR BETTER' and vp.balance == 100
+
+'''
+misc
+'''
+def test_paytable_pop():
+    # make sure that we are using a copy of the paytable and not modifying it
+    table = PayTable().get_pay_table()
+    table_length = len(table)
+    table.pop()
+    # now get the table again, the pop should be have changed the original list
+    table = PayTable().get_pay_table()
+    assert table_length == len(table)
+
+# def test_cannot_have_1():
+#     vp.__init__()
+#     vp.deck.shuffle()
+#     for c in vp.deck.deck:
+#         print(c)
+#     assert False
